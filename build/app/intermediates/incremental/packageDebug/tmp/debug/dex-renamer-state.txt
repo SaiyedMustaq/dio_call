@@ -1,0 +1,4 @@
+#Sat Mar 26 16:34:52 IST 2022
+base.0=/Users/macos/Mustaq HP/Demo Project/Flutter-UI/dio_flutter/dio_fluttter_application/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
