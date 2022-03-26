@@ -17,10 +17,12 @@ enum Method { POST, GET, PUT, DELETE, PATCH }
 const BASE_URL = "https://reqres.in/api/";
 
 class NetworkCall {
-  static header() => {"Content-Type": "application/json"};
-  Dio _dio = Dio();
+  static header() => {
+        "Content-Type": "application/json",
+      };
+  final Dio _dio = Dio();
 
-  Future<dynamic> request({
+  Future<Response> request({
     @required BuildContext? context,
     @required String? url,
     @required Method? method,
@@ -81,6 +83,42 @@ class NetworkCall {
     }
   }
 
+  Future<Response> sendFile(String url, File file) async {
+    var len = await file.length();
+    var response = await _dio.post(url,
+        data: file.openRead(),
+        options: Options(headers: {
+          Headers.contentLengthHeader: len,
+        } // set content-length
+            ));
+    return response;
+  }
+
+  Future<Response> sendForm(
+    String url,
+    Map<String, dynamic> data,
+    Map<String, File> files,
+  ) async {
+    Map<String, MultipartFile> fileMap = {};
+    for (MapEntry fileEntry in files.entries) {
+      File file = fileEntry.value;
+      String fileName = file.path.split('').last;
+      fileMap[fileEntry.key] = MultipartFile(
+          file.openRead(), await file.length(),
+          filename: fileName);
+    }
+    data.addAll(fileMap);
+    var formData = FormData.fromMap(data);
+
+    return await _dio.post(
+      url,
+      data: formData,
+      options: Options(
+        contentType: 'multipart/form-data',
+      ),
+    );
+  }
+
   Future<Object> _showNoInternetDialog({
     String? url,
     BuildContext? context,
@@ -99,8 +137,12 @@ class NetworkCall {
             child: Center(
               child: NoInternetPage(
                 onButtonClick: () {
-                  request(url: url, method: method)
-                      .then((value) => Navigator.pop(context, value));
+                  request(url: url, method: method, context: null).then(
+                    (value) => Navigator.pop(
+                      context,
+                      value,
+                    ),
+                  );
                 },
               ),
             ),

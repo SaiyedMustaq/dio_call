@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:dio_fluttter_application/NetworkCall.dart';
+import 'package:dio_fluttter_application/User.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 
@@ -34,9 +39,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   NetworkCall httpService = NetworkCall();
+  late User user;
+  bool isLoadig = true;
 
   @override
   void initState() {
+    callApi(1);
     super.initState();
   }
 
@@ -46,18 +54,35 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: RaisedButton(
-        onPressed: () {
-          callApi(1);
-        },
-        child: const Text('Go 2'),
-      ),
+      body: isLoadig
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Center(
+              child: Column(
+                children: [
+                  Text(user.data!.firstName ?? ""),
+                  Text(user.data!.lastName ?? ""),
+                  Text(user.data!.email ?? ""),
+                  Image.network(user.data!.avatar!)
+                ],
+              ),
+            ),
     );
   }
 
   Future callApi(int id) async {
-    var result =
-        await httpService.request(url: 'users/$id', method: Method.GET);
-    print('RESULT $result');
+    Response result = await httpService.request(
+      url: 'users/$id',
+      method: Method.GET,
+      context: context,
+    );
+    user = User.fromJson(jsonDecode(jsonEncode(result.data)));
+    setState(() {
+      isLoadig = false;
+    });
+    if (kDebugMode) {
+      print('RESULT $result');
+    }
   }
 }

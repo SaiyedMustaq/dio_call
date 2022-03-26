@@ -5,18 +5,18 @@ class User {
   User({this.data, this.support});
 
   User.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     support =
-        json['support'] != null ? new Support.fromJson(json['support']) : null;
+        json['support'] != null ? Support.fromJson(json['support']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    if (this.support != null) {
-      data['support'] = this.support!.toJson();
+    if (support != null) {
+      data['support'] = support!.toJson();
     }
     return data;
   }
@@ -40,12 +40,12 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['email'] = this.email;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['avatar'] = this.avatar;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['email'] = email;
+    data['first_name'] = firstName;
+    data['last_name'] = lastName;
+    data['avatar'] = avatar;
     return data;
   }
 }
@@ -62,9 +62,9 @@ class Support {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['text'] = this.text;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['url'] = url;
+    data['text'] = text;
     return data;
   }
 }
