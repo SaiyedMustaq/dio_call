@@ -12,3 +12,14 @@ class NoInternetPage extends StatelessWidget {
     return Container();
   }
 }
+
+class InternaleServerError extends StatelessWidget {
+  Function? onButtonClick;
+  InternaleServerError({Key? key, required this.onButtonClick})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}

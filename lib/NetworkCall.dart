@@ -1,9 +1,11 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
+import 'dart:developer';
 import 'dart:io';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:dio/dio.dart';
+import 'package:dio_fluttter_application/AppInterceptors.dart';
 import 'package:dio_fluttter_application/User.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,10 @@ class NetworkCall {
         "Content-Type": "application/json",
       };
   final Dio _dio = Dio();
+
+  NetworkCall() {
+    _dio.interceptors.add(AppInterceptors());
+  }
 
   Future<Response> request({
     @required BuildContext? context,
@@ -48,6 +54,8 @@ class NetworkCall {
       if (response.statusCode == 200) {
         return response;
       } else if (response.statusCode == 401) {
+        _showInternalServerError(
+            context: context, method: method, requestParam: params, url: url);
         throw Exception("Unauthorized");
       } else if (response.statusCode == 500) {
         throw Exception("Server Error");
@@ -120,6 +128,37 @@ class NetworkCall {
   }
 
   Future<Object> _showNoInternetDialog({
+    String? url,
+    BuildContext? context,
+    Map<String, dynamic>? requestParam,
+    Method? method,
+  }) async {
+    return showGeneralDialog(
+        context: context!,
+        barrierColor: Colors.red,
+        // Background color
+        barrierDismissible: false,
+        barrierLabel: 'Dialog',
+        pageBuilder: (_, __, ___) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: Center(
+              child: NoInternetPage(
+                onButtonClick: () {
+                  request(url: url, method: method, context: null).then(
+                    (value) => Navigator.pop(
+                      context,
+                      value,
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<Object> _showInternalServerError({
     String? url,
     BuildContext? context,
     Map<String, dynamic>? requestParam,
