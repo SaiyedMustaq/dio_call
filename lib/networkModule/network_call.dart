@@ -1,14 +1,8 @@
-// ignore_for_file: unnecessary_brace_in_string_interps
-
-import 'dart:developer';
 import 'dart:io';
-
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:dio/dio.dart';
-import 'package:dio_fluttter_application/AppInterceptors.dart';
-import 'package:dio_fluttter_application/User.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import 'NoInternetPage.dart';
 
@@ -25,7 +19,9 @@ class NetworkCall {
   final Dio _dio = Dio();
 
   NetworkCall() {
-    _dio.interceptors.add(AppInterceptors());
+    _dio.interceptors.add(PrettyDioLogger(
+      error: true,request: true,requestBody: true,requestHeader: true,responseBody: true,responseHeader: true
+    ));
   }
 
   Future<Response> request({
